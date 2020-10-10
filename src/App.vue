@@ -2,22 +2,50 @@
   <v-app>
     <v-app-bar app color="indigo">
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title style="color: white">Онлайн-прачечная</v-toolbar-title>
-      <v-menu v-model="translate" offset-x rounded="b-xl" :close-on-content-click="false" nudge-width="120">
+      <v-toolbar-title style="color: white">{{curLocale.toolbarTitle}}</v-toolbar-title>
+      <v-menu v-model="translate" offset-x rounded="b-xl" :close-on-content-click="false" nudge-width="140">
         <template v-slot:activator="{on, attrs}">
           <v-btn v-on="on" v-bind="attrs" color="white" icon title="Выбор языка">
             <v-icon>translate</v-icon>
           </v-btn>
         </template>
         <v-card>
-          <v-radio-group style="margin: 5%">
-            <v-radio
-                label="Украинский"
-            ></v-radio>
-            <v-radio
-                label="Русский"
-            ></v-radio>
-          </v-radio-group>
+          <v-card-subtitle>{{curLocale.locales.langSubTitle}}</v-card-subtitle>
+          <v-divider></v-divider>
+          <v-list shaped>
+            <v-list-item-group color="indigo">
+              <v-list-item @click="changeLangEN">
+                <v-list-item-content>
+                  <v-list-item-title>
+                    {{curLocale.locales.selects[0]}}
+                  </v-list-item-title>
+                </v-list-item-content>
+                <v-list-item-icon>
+                  <v-icon>chevron_right</v-icon>
+                </v-list-item-icon>
+              </v-list-item>
+              <v-list-item @click="changeLangRU">
+                <v-list-item-content>
+                  <v-list-item-title>
+                    {{curLocale.locales.selects[1]}}
+                  </v-list-item-title>
+                </v-list-item-content>
+                <v-list-item-icon>
+                  <v-icon>chevron_right</v-icon>
+                </v-list-item-icon>
+              </v-list-item>
+              <v-list-item @click="changeLangUA">
+                <v-list-item-content v-model="langThird">
+                  <v-list-item-title>
+                    {{curLocale.locales.selects[2]}}
+                  </v-list-item-title>
+                </v-list-item-content>
+                <v-list-item-icon>
+                  <v-icon>chevron_right</v-icon>
+                </v-list-item-icon>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
         </v-card>
       </v-menu>
       <v-spacer></v-spacer>
@@ -33,23 +61,29 @@
           <v-divider></v-divider>
           <v-list flat>
             <v-list-item-group>
+              <v-list-item>
+                <v-list-item-icon><v-icon>attach_money</v-icon></v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>{{info.userInfo.balance}} {{curLocale.authedUser.menuItems[0]}}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
               <v-list-item @click="$router.push('/cabinet')">
                 <v-list-item-icon><v-icon>person</v-icon></v-list-item-icon>
                 <v-list-item-content>
-                  <v-list-item-title>Личный кабинет</v-list-item-title>
+                  <v-list-item-title>{{curLocale.authedUser.menuItems[1]}}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
               <v-list-item @click="$router.push('/')">
                 <v-list-item-icon><v-icon>apps</v-icon></v-list-item-icon>
                 <v-list-item-content>
-                  <v-list-item-title>Каталог</v-list-item-title>
+                  <v-list-item-title>{{curLocale.authedUser.menuItems[2]}}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
               <v-divider></v-divider>
               <v-list-item @click="$router.push('/logout')">
                 <v-list-item-icon><v-icon>exit_to_app</v-icon></v-list-item-icon>
                 <v-list-item-content>
-                  <v-list-item-title>Выйти</v-list-item-title>
+                  <v-list-item-title>{{curLocale.authedUser.menuItems[3]}}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </v-list-item-group>
@@ -66,25 +100,25 @@
               <v-list-item>
                 <v-list-item-icon><v-icon>attach_money</v-icon></v-list-item-icon>
                 <v-list-item-content>
-                  <v-list-item-title>{{info.userInfo.balance}} UAH</v-list-item-title>
+                  <v-list-item-title>{{info.userInfo.balance}} {{curLocale.nonAuthedUser.menuItems[0]}}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
               <v-list-item @click="$router.push('/')">
                 <v-list-item-icon><v-icon>apps</v-icon></v-list-item-icon>
                 <v-list-item-content>
-                  <v-list-item-title>Каталог</v-list-item-title>
+                  <v-list-item-title>{{curLocale.nonAuthedUser.menuItems[1]}}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
               <v-list-item @click="register = true">
                 <v-list-item-icon><v-icon>person_add</v-icon></v-list-item-icon>
                 <v-list-item-content>
-                  <v-list-item-title>Регистрация</v-list-item-title>
+                  <v-list-item-title>{{curLocale.nonAuthedUser.menuItems[2]}}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
               <v-list-item @click="auth = true">
                 <v-list-item-icon><v-icon>login</v-icon></v-list-item-icon>
                 <v-list-item-content>
-                  <v-list-item-title>Авторизация</v-list-item-title>
+                  <v-list-item-title>{{curLocale.nonAuthedUser.menuItems[3]}}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </v-list-item-group>
@@ -95,7 +129,7 @@
     <v-dialog v-model="auth" max-width="600px" persistent>
       <v-card>
         <v-card-title>
-          Авторизация
+          {{curLocale.authForm.title}}
           <v-spacer></v-spacer>
           <v-btn icon @click="auth = false">
             <v-icon>
@@ -118,7 +152,7 @@
             <v-row>
               <v-col>
                 <v-text-field
-                    label="Логин*"
+                    :label="curLocale.authForm.labels[0]"
                     v-model="login"
                     :rules="textRules"
                     required
@@ -129,7 +163,7 @@
               <v-col>
                 <v-text-field
                     type="password"
-                    label="Пароль*"
+                    :label="curLocale.authForm.labels[2]"
                     v-model="pwd"
                     :rules="textRules"
                     required
@@ -137,7 +171,7 @@
               </v-col>
             </v-row>
           </v-container>
-          <v-btn @click="doAuth" color="success" width="100%">ВОЙТИ</v-btn>
+          <v-btn @click="doAuth" color="success" width="100%">{{curLocale.authForm.btnTitle}}</v-btn>
         </v-form>
       </v-card>
     </v-dialog>
@@ -162,10 +196,94 @@
         drawer: false,
         isAuth: false,
         auth: false,
+        curLocale: null,
+        locales: {
+          'en-EN': {
+            toolbarTitle: 'Online Washing',
+            locales: {
+              langSubTitle: 'Language of Interface',
+              selects: [
+                'English', 'Russian', 'Ukrainian'
+              ]
+            },
+            authedUser: {
+              menuItems: [
+                'UAH', 'Personal Area', 'Catalog', 'Logout'
+              ]
+            },
+            nonAuthedUser: {
+              menuItems: [
+                'UAH', 'Catalog', 'Sign-Up', 'Sign-In'
+              ]
+            },
+            authForm: {
+              title: 'Sign-In',
+              labels: [
+                'Login*', 'Password*'
+              ],
+              btnTitle: 'ENTER'
+            }
+          },
+          'ru-RU': {
+            toolbarTitle: 'Онлайн-прачечная',
+            locales: {
+              langSubTitle: 'Язык интерфейса',
+              selects: [
+                  'English', 'Русский', 'Украинский'
+              ]
+            },
+            authedUser: {
+              menuItems: [
+                  'ГРН', 'Личный кабинет', 'Каталог', 'Выйти'
+              ]
+            },
+            nonAuthedUser: {
+              menuItems: [
+                'ГРН', 'Каталог', 'Регистрация', 'Авторизация'
+              ]
+            },
+            authForm: {
+              title: 'Авторизация',
+              labels: [
+                  'Логин*', 'Пароль*'
+              ],
+              btnTitle: 'ВОЙТИ'
+            }
+          },
+          'ua-UA': {
+            toolbarTitle: 'Онлайн-пральня',
+            locales: {
+              langSubTitle: 'Мова інтерфейсу',
+              selects: [
+                'English', 'Російська', 'Українська'
+              ]
+            },
+            authedUser: {
+              menuItems: [
+                'ГРН', 'Особистий кабінет', 'Каталог', 'Вийти'
+              ]
+            },
+            nonAuthedUser: {
+              menuItems: [
+                'ГРН', 'Каталог', 'Реєстрація', 'Авторизація'
+              ]
+            },
+            authForm: {
+              title: 'Авторизація',
+              labels: [
+                'Логін*', 'Пароль*'
+              ],
+              btnTitle: 'ВІЙТИ'
+            }
+          }
+        },
         register: false,
         errForm: false,
         errText: null,
         translate: false,
+        langOne: false,
+        langSecond: false,
+        langThird: false,
         login: '',
         pwd: '',
         textRules: [
@@ -184,6 +302,12 @@
               this.info.userInfo.balance = this.info.userInfo.balance.toString() + ", 00";
             }
           })
+      if (localStorage.getItem('lang') === null) {
+        localStorage.setItem('lang', 'ua-UA')
+        this.langThird = true;
+        this.langOne = false;
+        this.langSecond = false;
+      }
       // let req = new XMLHttpRequest()
       let info;
       // req.open('GET', `http://${ip}:${port}/api/persons`, false)
@@ -192,7 +316,32 @@
       // this.info.userInfo = info
       this.isAuth = info.length > 0
     },
+    beforeMount() {
+      if (localStorage['lang'] === 'ru-RU') {
+        this.curLocale = this.locales["ru-RU"];
+      } else if (localStorage['lang'] === 'en-EN') {
+        this.curLocale = this.locales["en-EN"];
+      } else if (localStorage['lang'] === 'ua-UA') {
+        this.curLocale = this.locales["ua-UA"];
+      } else {
+        localStorage.setItem('lang', 'ua-UA')
+        this.curLocale = this.locales["ua-UA"];
+      }
+    },
     methods: {
+      changeLangEN() {
+        localStorage.setItem('lang', 'en-EN')
+        this.curLocale = this.locales["en-EN"];
+      },
+      changeLangRU() {
+        localStorage.setItem('lang', 'ru-RU')
+        this.curLocale = this.locales["ru-RU"];
+        this.langSecond = true;
+      },
+      changeLangUA() {
+        localStorage.setItem('lang', 'ua-UA')
+        this.curLocale = this.locales["ua-UA"];
+      },
       getUserId() {
         let request = new XMLHttpRequest();
         let info;

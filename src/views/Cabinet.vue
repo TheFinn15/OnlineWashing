@@ -2,11 +2,11 @@
   <v-app>
     <v-card style="margin: 8% 15% 0 15%">
       <v-tabs grow color="indigo">
-        <v-tab>Информация</v-tab>
-        <v-tab>Мои заказы</v-tab>
-        <v-tab>Настройки</v-tab>
+        <v-tab>{{curLocale.tabsNames[0]}}</v-tab>
+        <v-tab>{{curLocale.tabsNames[1]}}</v-tab>
+        <v-tab>{{curLocale.tabsNames[2]}}</v-tab>
         <v-tab-item>
-          <v-card-title>Личный кабинет {{info.userInfo.fName}} {{info.userInfo.sName}}</v-card-title>
+          <v-card-title>{{curLocale.tabItems[0].title}} {{info.userInfo.fName}} {{info.userInfo.sName}}</v-card-title>
           <v-divider></v-divider>
           <v-container>
             <v-row>
@@ -15,30 +15,30 @@
               </v-col>
               <v-col>
                 <v-card-text>
-                  <b>Имя:</b> {{info.userInfo.fName}} <br/>
-                  <b>Фамилия:</b> {{info.userInfo.sName}} <br/>
-                  <b>Логин:</b> {{info.userInfo.login}} <br/>
-                  <b>E-mail:</b> {{info.userInfo.email}} <br/>
-                  <b>Телефон:</b> {{info.userInfo.phone}} <br/>
-                  <b>Баланс:</b> {{info.userInfo.balance}}
+                  <b>{{curLocale.tabItems[0].userInfo[0]}}</b> {{info.userInfo.fName}} <br/>
+                  <b>{{curLocale.tabItems[0].userInfo[1]}}</b> {{info.userInfo.sName}} <br/>
+                  <b>{{curLocale.tabItems[0].userInfo[2]}}</b> {{info.userInfo.login}} <br/>
+                  <b>{{curLocale.tabItems[0].userInfo[3]}}</b> {{info.userInfo.email}} <br/>
+                  <b>{{curLocale.tabItems[0].userInfo[4]}}</b> {{info.userInfo.phone}} <br/>
+                  <b>{{curLocale.tabItems[0].userInfo[5]}}</b> {{info.userInfo.balance}}
                 </v-card-text>
               </v-col>
             </v-row>
           </v-container>
           <v-divider></v-divider>
           <v-card flat>
-            <v-card-title>Текущие стирки:</v-card-title>
+            <v-card-title>{{curLocale.tabItems[0].curOrders.title}}</v-card-title>
             <v-divider></v-divider>
             <v-list v-if="info.userInfo.machine !== null">
               <v-list-group v-for="(item, i) in info.userInfo.machine" :key="i">
                 <template v-slot:activator>
                     <v-list-item-title>
-                      <v-badge :color="item.status" title="Статус стиральной машини">
+                      <v-badge :color="item.status" :title="curLocale.tabItems[0].curOrders.tipForMachine">
                         {{item.name}}
                       </v-badge>
                     </v-list-item-title>
                   <v-item-group>
-                    <v-list-item-title>Готово на {{item.percentReady}}%</v-list-item-title>
+                    <v-list-item-title>{{curLocale.tabItems[0].curOrders.machine.titleReady}} {{item.percentReady}}%</v-list-item-title>
                   </v-item-group>
                 </template>
                 <v-list-item>
@@ -49,9 +49,9 @@
                       </v-col>
                       <v-col>
                         <v-list-item-title>
-                          Цена: {{item.price}} UAH <br/>
-                          Описание: {{item.description}} <br/>
-                          Вместимость: {{item.capacity}}л.
+                          {{curLocale.tabItems[0].curOrders.machine.listInfo[0]}} {{item.price}} {{curLocale.tabItems[0].curOrders.machine.listInfo[1]}} <br/>
+                          {{curLocale.tabItems[0].curOrders.machine.listInfo[2]}} {{item.description}} <br/>
+                          {{curLocale.tabItems[0].curOrders.machine.listInfo[3]}} {{item.capacity}}{{curLocale.tabItems[0].curOrders.machine.listInfo[4]}}
                         </v-list-item-title>
                       </v-col>
                     </v-row>
@@ -61,12 +61,14 @@
             </v-list>
             <div v-else style="margin: 10%">
               <v-icon style="text-align: center;display: block">warning</v-icon>
-              <v-card-title style="justify-content: center">Активных заказов нет</v-card-title>
+              <v-card-title style="justify-content: center">{{curLocale.tabItems[0].curOrders.ordersIsEmptyTitle}}</v-card-title>
             </div>
           </v-card>
         </v-tab-item>
         <v-tab-item>
           <v-list v-if="info.drafts !== null">
+            <v-card-title>{{curLocale.tabItems[1].title}}</v-card-title>
+            <v-divider></v-divider>
             <v-list-group v-for="(item, i) in info.drafts" :key="i">
               <template v-slot:activator>
                 <v-list-item-title>
@@ -80,47 +82,47 @@
                 <v-row>
                   <v-col>
                     <v-text-field
-                        label="Способ оплаты"
+                        :label="curLocale.tabItems[1].listOrders.paymentType"
                         readonly
-                        :value="item.paymentType === 'credit'?'Кредитная карта':'Наличные'"
+                        :value="item.paymentType === 'credit'?curLocale.tabItems[1].listOrders.askForCondition[0]:curLocale.tabItems[1].listOrders.askForCondition[1]"
                     ></v-text-field>
                     <v-text-field
                         v-if="item.paymentType === 'credit'"
-                        label="Номер кредитной карты"
+                        :label="curLocale.tabItems[1].listOrders.numsCreditCard"
                         readonly
                         :value="item.creditCard"
                     ></v-text-field>
                   </v-col>
                   <v-col>
-                    <v-badge :color="item.machine.status" overlap title="Статус стиральной машини на данный момент">
+                    <v-badge :color="item.machine.status" overlap :title="curLocale.tabItems[1].listOrders.tipsForMachine">
                       <v-card rounded style="padding: 5%">
                         <v-row>
                           <v-col>
                             <v-text-field
-                                label="Стиральная машина"
+                                :label="curLocale.tabItems[1].listOrders.nameMachine"
                                 readonly
                                 :value="item.machine.name"
                             ></v-text-field>
                             <v-text-field
-                                label="Вместимость"
+                                :label="curLocale.tabItems[1].listOrders.capacityMachine"
                                 readonly
                                 :value="item.machine.capacity"
                             ></v-text-field>
                           </v-col>
                           <v-col>
                             <v-text-field
-                                label="Цена"
+                                :label="curLocale.tabItems[1].listOrders.priceMachine"
                                 readonly
-                                :value="item.machine.price+' UAH/л.'"
+                                :value="item.machine.price+curLocale.tabItems[1].listOrders.additiveInfo"
                             ></v-text-field>
                             <v-text-field
-                                label="Скидка"
+                                :label="curLocale.tabItems[1].listOrders.stockMachine"
                                 readonly
                                 :value="item.machine.stock"
                             ></v-text-field>
                           </v-col>
                         </v-row>
-                        <v-select :items="item.additional" rounded label="Используемые добавки"></v-select>
+                        <v-select :items="item.additional" rounded :label="curLocale.tabItems[1].listOrders.additionalMachine"></v-select>
                       </v-card>
                     </v-badge>
                   </v-col>
@@ -130,11 +132,11 @@
           </v-list>
           <div v-else style="margin: 10%">
             <v-icon style="text-align: center;display: block">warning</v-icon>
-            <v-card-title style="justify-content: center">Заказов не найдено</v-card-title>
+            <v-card-title style="justify-content: center">{{curLocale.tabItems[1].listIsEmptyTitle}}</v-card-title>
           </div>
         </v-tab-item>
         <v-tab-item>
-          <v-card-title>Настройки аккаунта</v-card-title>
+          <v-card-title>{{ curLocale.tabItems[2].title }}</v-card-title>
           <v-divider></v-divider>
           <v-container>
             <v-row style="margin: 0 2% 0 2%">
@@ -142,7 +144,7 @@
                 <v-img :src="info.userInfo.avatar"></v-img>
                 <v-file-input
                     accept="image/png, image/jpeg, image/jpg"
-                    label="Ваша аватарка"
+                    :label="curLocale.tabItems[2].editForm.avatar"
                     prepend-icon="mdi-camera"
                 ></v-file-input>
               </v-col>
@@ -150,17 +152,17 @@
                 <v-row>
                   <v-col>
                     <v-text-field
-                        label="Имя"
+                        :label="curLocale.tabItems[2].editForm.fName"
                         :placeholder="info.userInfo.fName"
                         outlined
                     ></v-text-field>
                     <v-text-field
-                        label="Фамилия"
+                        :label="curLocale.tabItems[2].editForm.sName"
                         :placeholder="info.userInfo.sName"
                         outlined
                     ></v-text-field>
                     <v-text-field
-                        label="Телефон"
+                        :label="curLocale.tabItems[2].editForm.phone"
                         :rules="phoneRules"
                         :placeholder="info.userInfo.phone"
                         outlined
@@ -168,18 +170,18 @@
                   </v-col>
                   <v-col>
                     <v-text-field
-                        label="Логин"
+                        :label="curLocale.tabItems[2].editForm.login"
                         :placeholder="info.userInfo.login"
                         outlined
                     ></v-text-field>
                     <v-text-field
-                        label="Пароль"
+                        :label="curLocale.tabItems[2].editForm.pwd"
                         type="password"
                         :placeholder="info.userInfo.pwd"
                         outlined
                     ></v-text-field>
                     <v-text-field
-                        label="E-mail"
+                        :label="curLocale.tabItems[2].editForm.email"
                         type="email"
                         :rules="emailRules"
                         :placeholder="info.userInfo.email"
@@ -190,7 +192,7 @@
               </v-col>
             </v-row>
           </v-container>
-          <v-btn @click="editSettings" outlined color="indigo" width="100%">ИЗМЕНИТЬ</v-btn>
+          <v-btn @click="editSettings" outlined color="indigo" width="100%">{{curLocale.tabItems[2].editForm.btnTitle}}</v-btn>
         </v-tab-item>
       </v-tabs>
     </v-card>
@@ -210,16 +212,172 @@ export default {
         drafts: null,
       },
       phoneRules: [
-        v => v.length === 10 || 'Введите коретный номер телефона'
+        v => v.length === 10 || this.curLocale.tabItems[2].editForm.rulePhoneText
       ],
       emailRules: [
-        v => v.match("[a-zA-Z]+@[a-zA-Z]+[.][a-zA-Z]+") || "Введите верный e-mail"
-      ]
+        v => v.match("[a-zA-Z]+@[a-zA-Z]+[.][a-zA-Z]+") || this.curLocale.tabItems[2].editForm.ruleEmailText
+      ],
+      curLocale: null,
+      locales: {
+        'en-EN': {
+          toolbarTitle: 'Online Washing',
+          locales: {
+            langSubTitle: 'Language of Interface',
+            selects: [
+              'English', 'Russian', 'Ukrainian'
+            ]
+          },
+          authedUser: {
+            menuItems: [
+              'UAH', 'Personal Area', 'Catalog', 'Logout'
+            ]
+          },
+          nonAuthedUser: {
+            menuItems: [
+              'UAH', 'Catalog', 'Sign-Up', 'Sign-In'
+            ]
+          },
+          authForm: {
+            title: 'Sign-In',
+            labels: [
+              'Login*', 'Password*'
+            ],
+            btnTitle: 'ENTER'
+          }
+        },
+        'ru-RU': {
+          tabsNames: [
+              'Информация', 'Мои заказы', 'Настройки'
+          ],
+          tabItems: [
+            {
+              title: 'Личный кабинет',
+              userInfo: [
+                  'Имя:', 'Фамилия:', 'Логин:', 'E-mail:', 'Телефон:', 'Баланс:'
+              ],
+              curOrders: {
+                title: 'Текущие стирки:',
+                tipForMachine: 'Статус стиральной машини',
+                machine: {
+                  titleReady: 'Готово на',
+                  listInfo: [
+                      'Цена:', 'ГРН.', 'Описание:', 'Вместимость:', 'л.'
+                  ]
+                },
+                ordersIsEmptyTitle: 'Активных заказов нет'
+              }
+            },
+            {
+              title: 'Ваши заказы',
+              listOrders: {
+                paymentType: 'Способ оплаты',
+                askForCondition: [
+                    'Кредитная карта', 'Наличные'
+                ],
+                numsCreditCard: 'Номер кредитной карты',
+                tipsForMachine: 'Статус стиральной машини на данный момент',
+                nameMachine: 'Стиральная машина',
+                capacityMachine: 'Вместимость',
+                priceMachine: 'Цена',
+                additiveInfo: ' ГРН/л.',
+                stockMachine: 'Скидка',
+                additionalMachine: 'Используемые добавки'
+              },
+              listIsEmptyTitle: 'Заказов не найдено'
+            },
+            {
+              title: 'Настройки аккаунта',
+              editForm: {
+                avatar: 'Ваша аватарка',
+                fName: 'Имя',
+                sName: 'Фамилия',
+                phone: 'Телефон',
+                login: 'Логин',
+                pwd: 'Пароль',
+                email: 'E-mail',
+                btnTitle: 'ИЗМЕНИТЬ',
+                rulePhoneText: 'Введите коретный номер телефона',
+                ruleEmailText: 'Введите верный e-mail'
+              }
+            }
+          ]
+        },
+        'ua-UA': {
+          tabsNames: [
+            'Інформація', 'Мої замовлення', 'Налаштування'
+          ],
+          tabItems: [
+            {
+              title: 'Особистий кабінет',
+              userInfo: [
+                "Ім`я:", 'Прізвище:', 'Логін:', 'E-mail:', 'Телефон:', 'Баланс:'
+              ],
+              curOrders: {
+                title: 'Поточні прання:',
+                tipForMachine: 'Статус пральної машини',
+                machine: {
+                  titleReady: 'Готово на',
+                  listInfo: [
+                    'Ціна:', 'ГРН.', 'Опис:', 'Місткість:', 'л.'
+                  ]
+                },
+                ordersIsEmptyTitle: 'Активных замовлень немає'
+              }
+            },
+            {
+              title: 'Ваші замовлення',
+              listOrders: {
+                paymentType: 'Спосіб сплати',
+                askForCondition: [
+                  'Кредитна карта', 'Готівка'
+                ],
+                numsCreditCard: 'Номер кредитної карти',
+                tipsForMachine: 'Статус пральної машини на даний момент',
+                nameMachine: 'Пральна машина',
+                capacityMachine: 'Місткість',
+                priceMachine: 'Ціна',
+                additiveInfo: ' ГРН/л.',
+                stockMachine: 'Знижка',
+                additionalMachine: 'Використовані добавки'
+              },
+              listIsEmptyTitle: 'Замовлень не знайдено'
+            },
+            {
+              title: 'Налаштування аккаунта',
+              editForm: {
+                avatar: 'Ваша аватарка',
+                fName: 'Им`я',
+                sName: 'Прізвище',
+                phone: 'Телефон',
+                login: 'Логін',
+                pwd: 'Пароль',
+                email: 'E-mail',
+                btnTitle: 'ЗМІНИТИ',
+                rulePhoneText: 'Введіть коректний номер телефону',
+                ruleEmailText: 'Введіть коректний e-mail'
+              }
+            }
+          ]
+        }
+      },
     }
   },
   methods: {
     editSettings() {
 
+    }
+  },
+  beforeMount() {
+    if (localStorage['lang'] === 'ru-RU') {
+      this.curLocale = this.locales["ru-RU"];
+      console.log(this.curLocale);
+    } else if (localStorage['lang'] === 'en-EN') {
+      this.curLocale = this.locales["en-EN"];
+    } else if (localStorage['lang'] === 'ua-UA') {
+      this.curLocale = this.locales["ua-UA"];
+    } else {
+      localStorage.setItem('lang', 'ua-UA')
+      this.curLocale = this.locales["ua-UA"];
     }
   },
   mounted() {
