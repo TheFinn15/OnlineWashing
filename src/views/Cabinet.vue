@@ -220,30 +220,61 @@ export default {
       curLocale: null,
       locales: {
         'en-EN': {
-          toolbarTitle: 'Online Washing',
-          locales: {
-            langSubTitle: 'Language of Interface',
-            selects: [
-              'English', 'Russian', 'Ukrainian'
-            ]
-          },
-          authedUser: {
-            menuItems: [
-              'UAH', 'Personal Area', 'Catalog', 'Logout'
-            ]
-          },
-          nonAuthedUser: {
-            menuItems: [
-              'UAH', 'Catalog', 'Sign-Up', 'Sign-In'
-            ]
-          },
-          authForm: {
-            title: 'Sign-In',
-            labels: [
-              'Login*', 'Password*'
-            ],
-            btnTitle: 'ENTER'
-          }
+          tabsNames: [
+            'Dashboard', 'My Orders', 'Settings'
+          ],
+          tabItems: [
+            {
+              title: 'Personal Area of',
+              userInfo: [
+                'First Name:', 'Second Name:', 'Login:', 'E-mail:', 'Phone:', 'Balance:'
+              ],
+              curOrders: {
+                title: 'Current washings:',
+                tipForMachine: 'Status of washing machine',
+                machine: {
+                  titleReady: 'Ready of',
+                  listInfo: [
+                    'Price:', 'UAH.', 'Description:', 'Capacity:', 'L.'
+                  ]
+                },
+                ordersIsEmptyTitle: 'Active orders not found'
+              }
+            },
+            {
+              title: 'My Orders',
+              listOrders: {
+                paymentType: 'Payment Type',
+                askForCondition: [
+                  'Credit Card', 'Cash'
+                ],
+                numsCreditCard: 'Number of credit card',
+                tipsForMachine: 'Status of washing machine in the present',
+                nameMachine: 'Washing machine',
+                capacityMachine: 'Capacity',
+                priceMachine: 'Price',
+                additiveInfo: ' UAH/L.',
+                stockMachine: 'Stock',
+                additionalMachine: 'Used additives'
+              },
+              listIsEmptyTitle: 'Orders not found'
+            },
+            {
+              title: 'Settings of account',
+              editForm: {
+                avatar: 'Your Picture',
+                fName: 'First name',
+                sName: 'Second name',
+                phone: 'Phone',
+                login: 'Login',
+                pwd: 'Password',
+                email: 'E-mail',
+                btnTitle: 'EDIT',
+                rulePhoneText: 'Input correct phone number',
+                ruleEmailText: 'Input correct e-mail'
+              }
+            }
+          ]
         },
         'ru-RU': {
           tabsNames: [
@@ -268,7 +299,7 @@ export default {
               }
             },
             {
-              title: 'Ваши заказы',
+              title: 'Мои заказы',
               listOrders: {
                 paymentType: 'Способ оплаты',
                 askForCondition: [
@@ -325,7 +356,7 @@ export default {
               }
             },
             {
-              title: 'Ваші замовлення',
+              title: 'Мої замовлення',
               listOrders: {
                 paymentType: 'Спосіб сплати',
                 askForCondition: [

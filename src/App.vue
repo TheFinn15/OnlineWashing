@@ -24,7 +24,7 @@
                   <v-icon>chevron_right</v-icon>
                 </v-list-item-icon>
               </v-list-item>
-              <v-list-item @click="changeLangRU">
+              <v-list-item @click.prevent="changeLangRU">
                 <v-list-item-content>
                   <v-list-item-title>
                     {{curLocale.locales.selects[1]}}
@@ -332,15 +332,17 @@
       changeLangEN() {
         localStorage.setItem('lang', 'en-EN')
         this.curLocale = this.locales["en-EN"];
+        this.$router.go('/cabinet');
       },
       changeLangRU() {
         localStorage.setItem('lang', 'ru-RU')
         this.curLocale = this.locales["ru-RU"];
-        this.langSecond = true;
+        this.$router.go('/cabinet');
       },
       changeLangUA() {
         localStorage.setItem('lang', 'ua-UA')
         this.curLocale = this.locales["ua-UA"];
+        this.$router.go('/cabinet');
       },
       getUserId() {
         let request = new XMLHttpRequest();
