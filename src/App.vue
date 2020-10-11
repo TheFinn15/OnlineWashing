@@ -5,7 +5,7 @@
       <v-toolbar-title style="color: white">{{curLocale.toolbarTitle}}</v-toolbar-title>
       <v-menu v-model="translate" offset-x rounded="b-xl" :close-on-content-click="false" nudge-width="140">
         <template v-slot:activator="{on, attrs}">
-          <v-btn v-on="on" v-bind="attrs" color="white" icon title="Выбор языка">
+          <v-btn v-on="on" v-bind="attrs" color="white" icon :title="curLocale.locales.tip">
             <v-icon>translate</v-icon>
           </v-btn>
         </template>
@@ -61,7 +61,7 @@
           <v-divider></v-divider>
           <v-list flat>
             <v-list-item-group>
-              <v-list-item>
+              <v-list-item @click="$router.push('/balance')">
                 <v-list-item-icon><v-icon>attach_money</v-icon></v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title>{{info.userInfo.balance}} {{curLocale.authedUser.menuItems[0]}}</v-list-item-title>
@@ -97,7 +97,7 @@
         <v-card>
           <v-list>
             <v-list-item-group>
-              <v-list-item>
+              <v-list-item @click="$router.push('/balance')">
                 <v-list-item-icon><v-icon>attach_money</v-icon></v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title>{{info.userInfo.balance}} {{curLocale.nonAuthedUser.menuItems[0]}}</v-list-item-title>
@@ -163,7 +163,7 @@
               <v-col>
                 <v-text-field
                     type="password"
-                    :label="curLocale.authForm.labels[2]"
+                    :label="curLocale.authForm.labels[1]"
                     v-model="pwd"
                     :rules="textRules"
                     required
@@ -202,6 +202,7 @@
             toolbarTitle: 'Online Washing',
             locales: {
               langSubTitle: 'Language of Interface',
+              tip: 'Choice of language',
               selects: [
                 'English', 'Russian', 'Ukrainian'
               ]
@@ -221,11 +222,15 @@
               labels: [
                 'Login*', 'Password*'
               ],
+              rulesText: [
+                'This field can not be a empty'
+              ],
               btnTitle: 'ENTER'
             }
           },
           'ru-RU': {
             toolbarTitle: 'Онлайн-прачечная',
+            tip: 'Выбор языка',
             locales: {
               langSubTitle: 'Язык интерфейса',
               selects: [
@@ -247,6 +252,9 @@
               labels: [
                   'Логин*', 'Пароль*'
               ],
+              rulesText: [
+                  'Это поле не может быть пустым'
+              ],
               btnTitle: 'ВОЙТИ'
             }
           },
@@ -254,6 +262,7 @@
             toolbarTitle: 'Онлайн-пральня',
             locales: {
               langSubTitle: 'Мова інтерфейсу',
+              tip: 'Вибір мови',
               selects: [
                 'English', 'Російська', 'Українська'
               ]
@@ -273,6 +282,9 @@
               labels: [
                 'Логін*', 'Пароль*'
               ],
+              rulesText: [
+                'Поле не може бути порожнім'
+              ],
               btnTitle: 'ВІЙТИ'
             }
           }
@@ -287,13 +299,12 @@
         login: '',
         pwd: '',
         textRules: [
-          v => !!v || 'Это поле обязательно',
-          v => v.length !== 0 || "Поле не может быть пусто"
+          v => v.length !== 0 || this.curLocale.authForm.rulesText[0]
         ]
       }
     },
     mounted() {
-      axios.get(`http://${ip}:${port}/api/persons/35`)
+      axios.get(`http://${ip}:${port}/api/persons/1`)
           .then(resp => {
             this.info.userInfo = resp.data
             if (this.info.userInfo.balance === null || this.info.userInfo.balance === 0) {

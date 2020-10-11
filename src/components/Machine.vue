@@ -11,15 +11,15 @@
         <v-list-item>
           <v-list-item-content>
             <v-card-text>
-              <b>Вместимость</b>: {{machine.capacity}} л. <br />
-              <b>Описание</b>: {{machine.description}} <br />
-              <b>Цена за 1 кг</b>: {{machine.price}} грн.<br />
+              <b>{{locales.machines.capacity}}</b> {{machine.capacity}} {{locales.machines.litres}}<br />
+              <b>{{locales.machines.description}}</b> {{machine.description}} <br />
+              <b>{{locales.machines.price}}</b> {{machine.price}} {{locales.machines.currency}}<br />
             </v-card-text>
           </v-list-item-content>
         </v-list-item>
       </v-list-group>
     </v-list>
-    <v-btn width="100%" color="primary">Заказать</v-btn>
+    <v-btn width="100%" color="primary">{{locales.machines.btnTitle}}</v-btn>
   </v-card>
 </template>
 
@@ -28,6 +28,10 @@ export default {
   name: "Machine",
   props: {
     machine: {
+      type: Object,
+      required: true
+    },
+    locales: {
       type: Object,
       required: true
     }

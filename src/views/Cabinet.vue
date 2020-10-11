@@ -141,7 +141,7 @@
           <v-container>
             <v-row style="margin: 0 2% 0 2%">
               <v-col>
-                <v-img :src="info.userInfo.avatar"></v-img>
+                <v-img :src="info.userInfo.avatar" width="420" height="420"></v-img>
                 <v-file-input
                     accept="image/png, image/jpeg, image/jpg"
                     :label="curLocale.tabItems[2].editForm.avatar"
@@ -412,7 +412,7 @@ export default {
     }
   },
   mounted() {
-    axios.get(`http://${ip}:${port}/api/persons/35`)
+    axios.get(`http://${ip}:${port}/api/persons/1`)
       .then(resp => {
         this.info.userInfo = resp.data
         axios.get(`http://${ip}:${port}/api/drafts`)

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Machine v-for="(item, i) in machines" v-bind:key="i"
+    <Machine :locales="locales" v-for="(item, i) in machines" v-bind:key="i"
              v-bind:machine="item"/>
   </div>
 </template>
@@ -13,7 +13,7 @@ export default {
   components: {
     Machine
   },
-  props: ['machines']
+  props: ['machines', 'locales']
 }
 </script>
 

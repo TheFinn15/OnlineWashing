@@ -11,6 +11,18 @@ const routes = [
   {
     path: '/cabinet',
     component: () => import('@/views/Cabinet')
+  },
+  {
+    path: '/balance',
+    component: () => import('@/views/Balance')
+  },
+  {
+    path: '/admin/cabinet',
+    component: () => import('@/views/AdminCabinet')
+  },
+  {
+    path: '/admin/auth',
+    component: () => import('@/views/AdminAuth')
   }
 ]
 
