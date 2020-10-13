@@ -64,7 +64,7 @@
               <v-list-item @click="$router.push('/balance')">
                 <v-list-item-icon><v-icon>attach_money</v-icon></v-list-item-icon>
                 <v-list-item-content>
-                  <v-list-item-title>{{info.userInfo.balance}} {{curLocale.authedUser.menuItems[0]}}</v-list-item-title>
+                  <v-list-item-title>{{info.userInfo}} {{curLocale.authedUser.menuItems[0]}}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
               <v-list-item @click="$router.push('/cabinet')">
@@ -100,7 +100,7 @@
               <v-list-item @click="$router.push('/balance')">
                 <v-list-item-icon><v-icon>attach_money</v-icon></v-list-item-icon>
                 <v-list-item-content>
-                  <v-list-item-title>{{info.userInfo.balance}} {{curLocale.nonAuthedUser.menuItems[0]}}</v-list-item-title>
+                  <v-list-item-title>{{info.userInfo}} {{curLocale.nonAuthedUser.menuItems[0]}}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
               <v-list-item @click="$router.push('/')">
@@ -176,7 +176,7 @@
       </v-card>
     </v-dialog>
     <router-view></router-view>
-    <v-navigation-drawer app v-model="drawer" color="indigo">
+    <v-navigation-drawer app v-model="drawer" color="indigo" v-if="$route.fullPath !== ('/admin/cabinet' || '/admin/auth')">
 
     </v-navigation-drawer>
   </v-app>
@@ -307,10 +307,10 @@
       axios.get(`http://${ip}:${port}/api/persons/1`)
           .then(resp => {
             this.info.userInfo = resp.data
-            if (this.info.userInfo.balance === null || this.info.userInfo.balance === 0) {
-              this.info.userInfo.balance =  "00, 00"
+            if (this.info.userInfo.wallet.balance === null || this.info.userInfo.wallet.balance === 0 || this.info.userInfo.wallet.balance === undefined) {
+              this.info.userInfo.wallet.balance =  "00, 00"
             } else {
-              this.info.userInfo.balance = this.info.userInfo.balance.toString() + ", 00";
+              this.info.userInfo.wallet.balance = this.info.userInfo.wallet.balance.toString() + ", 00";
             }
           })
       if (localStorage.getItem('lang') === null) {
@@ -320,12 +320,12 @@
         this.langSecond = false;
       }
       // let req = new XMLHttpRequest()
-      let info;
+      // let info;
       // req.open('GET', `http://${ip}:${port}/api/persons`, false)
       // req.send()
       // info = JSON.parse(req.responseText)['users'].filter(i => i.session_id === +localStorage.getItem('uid'))
       // this.info.userInfo = info
-      this.isAuth = info.length > 0
+      // this.isAuth = info.length > 0
     },
     beforeMount() {
       if (localStorage['lang'] === 'ru-RU') {

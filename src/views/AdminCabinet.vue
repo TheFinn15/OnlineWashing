@@ -15,19 +15,24 @@
           ></v-text-field>
           <v-card-title>Управление данными</v-card-title>
           <v-divider></v-divider>
-          <div style="display: grid; grid-gap: 4px; grid-template-columns: repeat(4, auto);">
-            <v-card max-width="200" v-for="(item, i) in tablesInfo.tablesName" :key="i" style="margin: 4%" :name="item">
-              <v-card-subtitle>{{ item }}</v-card-subtitle>
-              <v-card-text>
-                <b>Дата изменения:</b> {{tablesInfo.datesEdits[i]}} <br/>
-                <b>Кол-во записей:</b> {{tablesInfo.countsRows[i]}} <br/>
-              </v-card-text>
-              <br>
-              <br>
-              <v-btn color="indigo" outlined width="100%" @click="handleTable">Подробнее</v-btn>
-            </v-card>
-          </div>
-          <v-dialog max-width="1000" persistent v-model="fullInfo">
+<!--          style="display: grid; grid-gap: 4px; grid-template-columns: repeat(4, auto);"-->
+          <v-container>
+            <v-row>
+              <v-col cols="4" v-for="(item, i) in tablesInfo.tablesName" :key="i">
+                <v-card max-width="200" style="margin: 2%" :name="item">
+                  <v-card-subtitle>{{ item }}</v-card-subtitle>
+                  <v-card-text>
+                    <b>Кол-во записей:</b> <br/> {{tablesInfo.countsRows[i]}} <br/>
+                    <b>Дата изменения:</b> <br/> {{tablesInfo.datesEdits[i]}}
+                  </v-card-text>
+                  <br>
+                  <br>
+                  <v-btn color="indigo" outlined width="100%" @click="handleTable">Подробнее</v-btn>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-container>
+          <v-dialog max-width="650" persistent v-model="fullInfo" v-if="chosenTable !== null">
             <v-card>
               <v-card-title>
                 Управление {{ chosenTable }}
@@ -38,184 +43,248 @@
                   </v-icon>
                 </v-btn>
               </v-card-title>
+              <v-text-field
+                  style="margin: 2%"
+                  full-width
+                  :label="'Введите запрос к ' + chosenTable"
+                  append-icon="search"
+                  outlined
+              ></v-text-field>
+              <v-snackbar top text timeout="2000" v-model="alertSuccess" color="indigo">
+                {{alertText}}
+              </v-snackbar>
+              <v-divider></v-divider>
+              <v-card style="justify-content: center; display: flex; margin: 2%" flat tile>
+                <v-hover v-slot:default="{hover}">
+                  <v-btn outlined elevation="3" color="indigo" @click="showAddForm = true">
+                    <span v-if="hover">Добавить</span>
+                    <v-icon>
+                      add
+                    </v-icon>
+                  </v-btn>
+                </v-hover>
+                <v-hover v-slot:default="{hover}">
+                  <v-btn outlined elevation="3" color="indigo" @click="modeEdit = !modeEdit">
+                    <span v-if="hover">Изменить</span>
+                    <v-icon>
+                      edit
+                    </v-icon>
+                  </v-btn>
+                </v-hover>
+                <v-hover v-slot:default="{hover}">
+                  <v-btn outlined elevation="3" color="indigo" @click="modeDel = !modeDel">
+                    <span v-if="hover">Удалить</span>
+                    <v-icon>
+                      delete
+                    </v-icon>
+                  </v-btn>
+                </v-hover>
+              </v-card>
+              <v-divider></v-divider>
+              <PersonsList :updater="updater" :show-edit="showEditForm" :show-del="showDelForm" :item-info="forms.persons" :table-info="chosenTableInfo" :mode-del="modeDel" :mode-edit="modeEdit" v-if="chosenTable === 'Persons'"/>
+            </v-card>
+          </v-dialog>
+          <v-dialog max-width="1000" persistent v-model="showAddForm">
+            <v-card>
+              <v-card-title>
+                Добавление записи в таблицу {{chosenTable}}
+                <v-spacer></v-spacer>
+                <v-btn icon @click="showAddForm = false">
+                  <v-icon>
+                    close
+                  </v-icon>
+                </v-btn>
+              </v-card-title>
+              <v-divider></v-divider>
               <v-tabs grow color="indigo">
-                <v-tab>Редактор</v-tab>
-                <v-tab>Просмотр</v-tab>
+                <v-tab>Обязательные поля</v-tab>
+                <v-tab>Необязательные поля</v-tab>
                 <v-tab-item>
                   <v-container>
                     <v-row>
                       <v-col>
-                        <v-select outlined :items="actionTable" label="Действия" v-model="activeAction"></v-select>
-                        <v-row v-if="activeAction === 'Создать'">
+                        <v-row>
                           <v-col>
-                            <v-img width="200" height="185" :src="avatar"></v-img>
-                            <v-file-input
-                                full-width
-                                label="Аватар пользователя"
-                                append-icon="mdi-camera"
+                            <v-text-field
+                                label="Имя"
                                 outlined
-                            ></v-file-input>
+                                :rules="rulesText"
+                                required
+                                v-model="forms.persons.fName"
+                            ></v-text-field>
+                            <v-text-field
+                                label="Фамилия"
+                                outlined
+                                :rules="rulesText"
+                                required
+                                v-model="forms.persons.sName"
+                            ></v-text-field>
+                            <v-text-field
+                                label="Логин"
+                                outlined
+                                :rules="rulesText"
+                                required
+                                v-model="forms.persons.login"
+                            ></v-text-field>
                           </v-col>
                           <v-col>
-                            <v-row>
-                              <v-col>
-                                <v-text-field
-                                    label="Имя"
-                                    outlined
-                                    :rules="rulesText"
-                                    required
-                                    v-model="fName"
-                                ></v-text-field>
-                                <v-text-field
-                                    label="Фамилия"
-                                    outlined
-                                    :rules="rulesText"
-                                    required
-                                    v-model="sName"
-                                ></v-text-field>
-                                <v-text-field
-                                    label="Логин"
-                                    outlined
-                                    :rules="rulesText"
-                                    required
-                                    v-model="login"
-                                ></v-text-field>
-                              </v-col>
-                              <v-col>
-                                <v-text-field
-                                    label="Пароль"
-                                    outlined
-                                    :rules="rulesText"
-                                    required
-                                    v-model="pwd"
-                                ></v-text-field>
-                                <v-text-field
-                                    label="E-mail"
-                                    outlined
-                                    :rules="emailText"
-                                    required
-                                    v-model="email"
-                                ></v-text-field>
-                                <v-text-field
-                                    label="Телефон"
-                                    outlined
-                                    :rules="rulesText"
-                                    required
-                                    v-model="phone"
-                                ></v-text-field>
-                              </v-col>
-                            </v-row>
+                            <v-text-field
+                                type="password"
+                                label="Пароль"
+                                outlined
+                                :rules="rulesText"
+                                required
+                                v-model="forms.persons.pwd"
+                            ></v-text-field>
+                            <v-text-field
+                                label="E-mail"
+                                outlined
+                                :rules="emailRules"
+                                required
+                                v-model="forms.persons.email"
+                            ></v-text-field>
+                            <v-text-field
+                                label="Телефон"
+                                outlined
+                                :rules="phoneRules"
+                                required
+                                v-model="forms.persons.phone"
+                            ></v-text-field>
                           </v-col>
-                        </v-row>
-                      </v-col>
-                      <v-col>
-                        <v-select outlined :items="getMappedItems" label="Записи" v-model="selectedItem" v-if="activeAction === 'Редактировать' || activeAction === 'Удалить'"></v-select>
-                        <v-card-title v-if="activeAction === 'Создать' || activeAction === 'Редактировать' || activeAction === 'Удалить'">Необязательные поля</v-card-title>
-                        <v-row v-if="activeAction === 'Создать' || activeAction === 'Редактировать' || activeAction === 'Удалить'">
-                          <v-col v-if="info.machines !== null">
-                            <v-card-subtitle>Стиральные машини:</v-card-subtitle>
-                            <v-checkbox dense v-for="(item, i) in info.machines" :key="i" :label="item.name + item.capacity"></v-checkbox>
-                          </v-col>
-                          <v-col v-else>
-                            <v-card-subtitle>
-                              Стиральные машини: <br/>
-                              Отсутствуют
-                            </v-card-subtitle>
-                          </v-col>
-                          <v-col></v-col>
                         </v-row>
                       </v-col>
                     </v-row>
                   </v-container>
                 </v-tab-item>
                 <v-tab-item>
-                  <v-list flat v-if="chosenTable === 'Persons'">
-                    <v-list-group v-for="(item, i) in chosenTableInfo" :key="i" color="indigo">
-                      <template v-slot:activator>
-                        <v-list-item-title>
-                          ID: {{item.id}} | {{item.fName}} {{item.sName}}
-                        </v-list-item-title>
-                      </template>
-                      <!--Информация о юзере-->
-                      <v-list-group sub-group no-action color="indigo">
-                        <template v-slot:activator>
-                          <v-list-item-content>
-                            <v-list-item-title>Информация о пользователе</v-list-item-title>
-                          </v-list-item-content>
-                        </template>
-                          <v-list-item>
-                            <v-list-item-title>Логин: {{item.login}}</v-list-item-title>
-                          </v-list-item>
-                          <v-list-item>
-                            <v-list-item-title>Пароль: {{item.pwd}}</v-list-item-title>
-                          </v-list-item>
-                          <v-list-item>
-                            <v-list-item-title>Е-маил: {{item.email}}</v-list-item-title>
-                          </v-list-item>
-                          <v-list-item>
-                            <v-list-item-title>Телефон: {{item.phone}}</v-list-item-title>
-                          </v-list-item>
-                          <v-list-item>
-                            <v-list-item-title>Дата обновления записи: {{item.lastUpdateRow}}</v-list-item-title>
-                          </v-list-item>
-                      </v-list-group>
-                      <!---------------------------------------------------------------------------------->
-                      <!--Отображение баланса-->
-                      <v-list-group sub-group no-action>
-                        <template v-slot:activator>
-                          <v-list-item-content>
-                            <v-list-item-title>ID: {{item.wallet.id}} | {{item.wallet.balance}} UAH</v-list-item-title>
-                          </v-list-item-content>
-                        </template>
-                        <v-list-group sub-group no-action v-if="item.wallet.historyTransactions.length > 0">
-                          <template v-slot:activator>
-                            <v-list-item-content>
-                              <v-list-item-title v-if="item.wallet.historyTransactions !== null">История пополнений</v-list-item-title>
-                            </v-list-item-content>
-                          </template>
-                          <v-list-item-group v-for="(history, j) in item.wallet.historyTransactions" :key="j">
-                            <v-list-item>
-                              <v-list-item-title>Сумма пополнения: {{history.sum}}</v-list-item-title>
-                              <v-list-item-title>Дата пополнения: {{history.date}}</v-list-item-title>
-                              <v-list-item-title>Дата изменения строки: {{history.lastUpdateRow}}</v-list-item-title>
-                            </v-list-item>
-                          </v-list-item-group>
-                        </v-list-group>
-                        <v-list-item else>
-                          <v-list-item-title>Пополнений не найдено</v-list-item-title>
-                        </v-list-item>
-                      </v-list-group>
-                      <!--Отображение стиральных машин связанных с юзером-->
-                      <v-list-group sub-group no-action v-if="item.machine.length > 0">
-                        <template v-slot:activator>
-                          <v-list-item-content>
-                            <v-list-item-title>{{item.machine.name}} {{item.machine.capacity}}</v-list-item-title>
-                          </v-list-item-content>
-                        </template>
-                        <v-list-item>
-                          <v-list-item-title>Описание: {{item.machine.description}}</v-list-item-title>
-                        </v-list-item>
-                        <v-list-item>
-                          <v-list-item-title>Цена: {{item.machine.price}}</v-list-item-title>
-                        </v-list-item>
-                        <v-list-item>
-                          <v-list-item-title>Дата измений строки: {{item.machine.lastUpdateRow}}</v-list-item-title>
-                        </v-list-item>
-                      </v-list-group>
-                      <v-list-group sub-group no-action v-else>
-                        <template v-slot:activator>
-                          <v-list-item-content>
-                            <v-list-item-title>Информация о стиральных машинах</v-list-item-title>
-                          </v-list-item-content>
-                        </template>
-                        <v-list-item>
-                          <v-list-item-title>Стиральная машина не используется</v-list-item-title>
-                        </v-list-item>
-                      </v-list-group>
-                    </v-list-group>
-                  </v-list>
+                  <v-container>
+                    <v-row>
+                      <v-col>
+                        <v-card-subtitle>Доступные машини:</v-card-subtitle>
+                        <div v-if="info.machines.length > 0 ">
+                          <v-checkbox v-for="(item, i) in info.machines" :label="item.name + ' ' + item.capacity" :key="i"></v-checkbox>
+                        </div>
+                        <v-checkbox readonly label="Машини отсутствуют"></v-checkbox>
+                      </v-col>
+                    </v-row>
+                  </v-container>
                 </v-tab-item>
               </v-tabs>
+              <v-divider></v-divider>
+              <v-btn @click="doAdd" outlined color="indigo" width="100%">Создать</v-btn>
+            </v-card>
+          </v-dialog>
+          <v-dialog max-width="1000" persistent v-model="showEditForm">
+            <v-card>
+              <v-card-title>
+                Изменение записи в таблице {{chosenTable}}
+                <v-spacer></v-spacer>
+                <v-btn icon @click="modeEdit = false">
+                  <v-icon>
+                    close
+                  </v-icon>
+                </v-btn>
+              </v-card-title>
+              <v-divider></v-divider>
+              <v-tabs grow color="indigo">
+                <v-tab>Обязательные поля</v-tab>
+                <v-tab>Необязательные поля</v-tab>
+                <v-tab-item>
+                  <v-container>
+                    <v-row>
+                      <v-col>
+                        <v-img width="200" height="185" :src="forms.persons.avatar"></v-img>
+                        <v-file-input
+                            full-width
+                            label="Аватар пользователя"
+                            append-icon="mdi-camera"
+                            v-model="forms.persons.avatar"
+                            @change="loadImg"
+                            outlined
+                        ></v-file-input>
+                      </v-col>
+                      <v-col>
+                        <v-row>
+                          <v-col>
+                            <v-text-field
+                                label="Имя"
+                                :placeholder="info.persons.fName"
+                                outlined
+                                :rules="rulesText"
+                                v-model="forms.persons.fName"
+                            ></v-text-field>
+                            <v-text-field
+                                label="Фамилия"
+                                :placeholder="info.persons.sName"
+                                outlined
+                                :rules="rulesText"
+                                v-model="forms.persons.sName"
+                            ></v-text-field>
+                            <v-text-field
+                                label="Логин"
+                                :placeholder="info.persons.login"
+                                outlined
+                                :rules="rulesText"
+                                v-model="forms.persons.login"
+                            ></v-text-field>
+                          </v-col>
+                          <v-col>
+                            <v-text-field
+                                type="password"
+                                label="Пароль"
+                                :placeholder="info.persons.pwd"
+                                outlined
+                                :rules="rulesText"
+                                v-model="forms.persons.pwd"
+                            ></v-text-field>
+                            <v-text-field
+                                label="E-mail"
+                                :placeholder="info.persons.email"
+                                outlined
+                                :rules="emailRules"
+                                v-model="forms.persons.email"
+                            ></v-text-field>
+                            <v-text-field
+                                label="Телефон"
+                                :placeholder="info.persons.phone"
+                                outlined
+                                :rules="phoneRules"
+                                v-model="forms.persons.phone"
+                            ></v-text-field>
+                          </v-col>
+                        </v-row>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-tab-item>
+                <v-tab-item>
+                  <v-container>
+                    <v-row>
+                      <v-col>
+                        <v-card-subtitle>Доступные машини:</v-card-subtitle>
+                        <div v-if="forms.persons.machine.length > 0 ">
+                          <v-checkbox v-for="(item, i) in forms.persons.machine" :label="item.name + ' ' + item.capacity" :key="i"></v-checkbox>
+                        </div>
+                        <v-checkbox readonly label="Машини отсутствуют"></v-checkbox>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-tab-item>
+              </v-tabs>
+              <v-divider></v-divider>
+              <v-btn @click="doEdit" outlined color="indigo" width="100%">Изменить</v-btn>
+            </v-card>
+          </v-dialog>
+          <v-dialog max-width="400" persistent v-model="showDelForm">
+            <v-card>
+              <v-card-title>
+                Сейчас будет удалена запись из <br/> {{chosenTable}}. <br/> Продолжить ?
+              </v-card-title>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn @click="modeDel = false" text color="green">Нет, отмена.</v-btn>
+                <v-btn @click="doRemove" text color="red">Да, удалить.</v-btn>
+              </v-card-actions>
             </v-card>
           </v-dialog>
         </v-tab-item>
@@ -227,12 +296,14 @@
 </template>
 
 <script>
+import PersonsList from "@/components/PersonsList";
 const ip = "192.168.0.113"
 const port = '9000'
 const axios = require('axios')
 
 export default {
   name: "AdminCabinet",
+  components: {PersonsList},
   data() {
     return {
       tablesInfo: {
@@ -245,34 +316,213 @@ export default {
       chosenTableInfo: null,
       chosenTable: null,
       selectedItem: null,
-      actionTable: [
-          'Создать', 'Редактировать', 'Удалить'
-      ],
-      activeAction: null,
       fullInfo: false,
+      showAddForm: false,
+      showEditForm: false,
+      showDelForm: false,
+      modeEdit: false,
+      modeDel: false,
       info: {
-        machines: null,
-        persons: null,
-        wallets: null,
-        histories: null,
-        stocks: null
+        machines: [],
+        persons: [],
+        wallets: [],
+        histories: [],
+        stocks: []
+      },
+      rulesText: [
+          v => !!v || 'Это поле не может быть пустым',
+          v => v.length > 0 || 'Это поле не может быть пустым'
+      ],
+      phoneRules: [
+        v => v.length > 0 || 'Это поле не может быть пустым',
+        v => v.length === 10 || 'Введите коректный номер'
+      ],
+      emailRules: [
+        v => v.length > 0 || 'Это поле не может быть пустым',
+        v => v.match("[a-zA-Z]+@[a-zA-Z]+[.][a-zA-Z]+") !== null || 'Введите коректный e-mail'
+      ],
+      alertSuccess: false,
+      alertErr: false,
+      alertText: '',
+      forms: {
+        persons: {
+          fName: '',
+          sName: '',
+          login: '',
+          email: '',
+          pwd: '',
+          phone: '',
+          avatar: '',
+          machine: ''
+        },
+        machines: {
+          stock: null,
+          name: null,
+          capacity: null,
+          description: null,
+          status: null,
+          price: null,
+          img: null
+        },
+        drafts: {
+          person: null,
+          machine: null,
+          price: null,
+          volume: null,
+          additional: null,
+          paymentType: null,
+          creditCard: null
+        },
+        wallets: {
+          balance: null
+        },
+        histories: {
+          sum: null,
+          date: null
+        },
+        stocks: {
+          name: null,
+          sponsor: null,
+          lastTerm: null,
+          discount: null
+        }
       }
     }
   },
-  computed: {
-    getMappedItems() {
-      return this.chosenTableInfo.map(i => i.id + ' - ' + i.login);
-    }
-  },
   methods: {
+    updater(info) {
+      this.forms[this.chosenTable.toLowerCase()] = info.infoItem
+        if (info.showEdit) this.showEditForm = true
+        else if (info.showDel) this.showDelForm = true
+    },
+    loadImg(ev) {
+      let reader = new FileReader()
+      reader.onload = (e) => {
+        this.forms[this.chosenTable.toLowerCase()].avatar = e.target.result
+      }
+      reader.readAsDataURL(ev);
+    },
+    doAdd() {
+      try {
+        let table = this.chosenTable
+        let curForms = this.forms[table.toLowerCase()]
+        console.log('info', curForms)
+        if (curForms.machine === '') curForms.machine = []
+        axios({
+          method: "POST",
+          url: `http://${ip}:${port}/api/${table.toLowerCase()}`,
+          data: this.forms[table.toLowerCase()]
+        }).then(resp => {
+          console.log(resp)
+          this.info[table.toLowerCase()].push(resp.data)
+        })
+        console.log('info', curForms)
+        for (let item of Object.keys(this.forms[table.toLowerCase()])) {
+          this.forms[table.toLowerCase()][item] = '';
+        }
+        this.fullInfo = false;
+        this.$nextTick(() => {
+          this.showAddForm = false;
+          this.alertSuccess = true;
+          this.alertText = 'Успешно добавлена запись';
+          this.fullInfo = true;
+        })
+        this.forms.persons = null;
+        this.selectedItem = ''
+      } catch (e) {
+        console.log('err', e)
+        this.$nextTick(() => {
+          this.alertErr = true;
+          this.alertText = 'Ошибка сервера';
+        })
+      }
+    },
+    doEdit() {
+      try {
+        let curItem = this.forms[table.toLowerCase()].id
+        let table = this.chosenTable
+        axios({
+          method: "PUT",
+          url: `http://${ip}:${port}/api/${table.toLowerCase()}/${curItem}`,
+          data: this.forms[table.toLowerCase()]
+        }).then(resp => {
+          console.log(resp)
+          this.info[table.toLowerCase()] = this.info[table.toLowerCase()].filter(i => i.id !== resp.data.id)
+          this.info[table.toLowerCase()].push(resp.data)
+        })
+        for (let item of Object.keys(this.forms[table.toLowerCase()])) {
+          this.forms[table.toLowerCase()][item] = '';
+        }
+        this.fullInfo = false;
+        this.$nextTick(() => {
+          this.showEditForm = false;
+          this.alertSuccess = true;
+          this.alertText = 'Запись успешно обновлена'
+          this.fullInfo = true;
+        })
+        this.forms.persons = null;
+      } catch (e) {
+        console.log('err', e)
+        this.$nextTick(() => {
+          this.alertErr = true;
+        })
+      }
+    },
+    doRemove() {
+      try {
+        let curItem = this.forms[table.toLowerCase()].id
+        let table = this.chosenTable
+        axios({
+          method: "DELETE",
+          url: `http://${ip}:${port}/api/${table.toLowerCase()}/${curItem}`
+        }).then(resp => console.log(resp))
+        this.fullInfo = false
+        for (let item of Object.keys(this.forms[table.toLowerCase()])) {
+          this.forms[table.toLowerCase()][item] = '';
+        }
+        this.$nextTick(() => {
+          this.info[table.toLowerCase()] = this.info[table.toLowerCase()].filter(i => i.id !== curItem)
+          this.showDelForm = false;
+          this.alertSuccess = true;
+          this.alertText = 'Запись успешно удалена'
+          this.fullInfo = true;
+        })
+      } catch (e) {
+        console.log('err', e)
+        this.$nextTick(() => {
+          this.alertErr = true;
+        })
+      }
+    },
+    handleItemEdit() {
+      let curItem = this.selectedItem.split(':')[1].trim();
+      let table = this.chosenTable
+      axios({
+        method: "GET",
+        url: `http://${ip}:${port}/api/${table.toLowerCase()}/${curItem}`,
+      }).then(resp => (this.forms.persons = resp.data))
+    },
+    loadingData() {
+      let curTable = this.chosenTable;
+      this.mappedItems = this.chosenTableInfo.map(i => 'ID: '+i.id);
+      console.log('mapped', this.mappedItems)
+      console.log('default', this.chosenTableInfo)
+      axios.get(`http://${ip}:${port}/api/${curTable.toLowerCase()}/${this.selectedItem.split(':')[1]}`)
+          .then(resp => {
+            this.info.persons = resp.data
+            console.log(resp.data)
+          })
+    },
     handleTable(ev) {
       this.fullInfo = true;
-      this.chosenTable = ev.path[0].offsetParent.offsetParent.attributes.getNamedItem('name').value || ev.path[0].offsetParent.attributes.getNamedItem('name').value
-      this.doReq(this.chosenTable);
-    },
-    doReq(nameTable) {
-      axios.get(`http://${ip}:${port}/api/${nameTable.toLowerCase()}`)
-        .then(resp => (this.chosenTableInfo = resp.data))
+      if (this.chosenTable === null) {
+        this.chosenTable = ev.path[0].offsetParent.offsetParent.attributes.getNamedItem('name').value || ev.path[0].offsetParent.attributes.getNamedItem('name').value
+      }
+      console.log(this.chosenTable)
+      axios({
+        method: 'GET',
+        url: `http://${ip}:${port}/api/${this.chosenTable.toLowerCase()}`,
+      }).then(resp => (this.chosenTableInfo = resp.data))
     }
   },
   mounted() {
@@ -291,49 +541,54 @@ export default {
           if (resp.data.length > 0) {
             this.tablesInfo.countsRows.push(resp.data.length)
             this.info.machines = resp.data
+            this.tablesInfo.datesEdits.push(resp.data[resp.data.length-1].lastUpdateRow)
           } else {
             this.tablesInfo.countsRows.push(0)
+            this.tablesInfo.datesEdits.push('Отсутствует')
           }
-          this.tablesInfo.datesEdits.push(resp.data[resp.data.length-1].lastUpdateRow)
         })
     axios.get(`http://${ip}:${port}/api/drafts`)
         .then(resp => {
           if (resp.data.length > 0) {
             this.tablesInfo.countsRows.push(resp.data.length)
+            this.tablesInfo.datesEdits.push(resp.data[resp.data.length-1].lastUpdateRow)
           } else {
             this.tablesInfo.countsRows.push(0)
+            this.tablesInfo.datesEdits.push('Отсутствует')
           }
-          this.tablesInfo.datesEdits.push(resp.data[resp.data.length-1].lastUpdateRow)
         })
     axios.get(`http://${ip}:${port}/api/stocks`)
         .then(resp => {
           if (resp.data.length > 0) {
             this.tablesInfo.countsRows.push(resp.data.length)
             this.info.stocks = resp.data
+            this.tablesInfo.datesEdits.push(resp.data[resp.data.length-1].lastUpdateRow)
           } else {
             this.tablesInfo.countsRows.push(0)
+            this.tablesInfo.datesEdits.push('Отсутствует')
           }
-          this.tablesInfo.datesEdits.push(resp.data[resp.data.length-1].lastUpdateRow)
         })
     axios.get(`http://${ip}:${port}/api/wallets`)
         .then(resp => {
           if (resp.data.length > 0) {
             this.tablesInfo.countsRows.push(resp.data.length)
             this.info.wallets = resp.data
+            this.tablesInfo.datesEdits.push(resp.data[resp.data.length-1].lastUpdateRow)
           } else {
             this.tablesInfo.countsRows.push(0)
+            this.tablesInfo.datesEdits.push('Отсутствует')
           }
-          this.tablesInfo.datesEdits.push(resp.data[resp.data.length-1].lastUpdateRow)
         })
     axios.get(`http://${ip}:${port}/api/histories`)
         .then(resp => {
           if (resp.data.length > 0) {
             this.tablesInfo.countsRows.push(resp.data.length)
             this.info.histories = resp.data
+            this.tablesInfo.datesEdits.push(resp.data[resp.data.length-1].lastUpdateRow)
           } else {
             this.tablesInfo.countsRows.push(0)
+            this.tablesInfo.datesEdits.push('Отсутствует')
           }
-          this.tablesInfo.datesEdits.push(resp.data[resp.data.length-1].lastUpdateRow)
         })
   }
 }

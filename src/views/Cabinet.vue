@@ -20,7 +20,7 @@
                   <b>{{curLocale.tabItems[0].userInfo[2]}}</b> {{info.userInfo.login}} <br/>
                   <b>{{curLocale.tabItems[0].userInfo[3]}}</b> {{info.userInfo.email}} <br/>
                   <b>{{curLocale.tabItems[0].userInfo[4]}}</b> {{info.userInfo.phone}} <br/>
-                  <b>{{curLocale.tabItems[0].userInfo[5]}}</b> {{info.userInfo.balance}}
+<!--                  <b>{{curLocale.tabItems[0].userInfo[5]}}</b> {{info.userInfo.balance}}-->
                 </v-card-text>
               </v-col>
             </v-row>
