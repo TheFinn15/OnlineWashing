@@ -1,24 +1,18 @@
-# frontend
+# OnlineWashing
 
-## Project setup
-```
-npm install
-```
+## Backend Run (Local)  
+```gradle bootRun```
+## Frontend Run (Local)  
+1. **Install Packages**  
+```npm install```
+2. **Frontend run**  
+```npm run serve```
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Backend Run (Production)  
+```gradle build```
+## Frontend Run (Production)  
+1. **Install Packages**  
+```npm install```
+2. **Frontend run**  
+```npm run build```
