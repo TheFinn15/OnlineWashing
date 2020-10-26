@@ -12,14 +12,6 @@ public class HistoryTransaction {
     private String date;
     private String lastUpdateRow;
 
-    public String getLastUpdateRow() {
-        return lastUpdateRow;
-    }
-
-    public void setLastUpdateRow(String lastUpdateRow) {
-        this.lastUpdateRow = lastUpdateRow;
-    }
-
     public Long getId() {
         return id;
     }
@@ -42,5 +34,13 @@ public class HistoryTransaction {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getLastUpdateRow() {
+        return lastUpdateRow;
+    }
+
+    public void setLastUpdateRow(String lastUpdateRow) {
+        this.lastUpdateRow = lastUpdateRow;
     }
 }

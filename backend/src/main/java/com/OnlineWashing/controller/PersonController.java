@@ -72,6 +72,7 @@ public class PersonController {
                     if (newPerson.getPhone() != null) { person.setPhone(newPerson.getPhone()); }
                     if (newPerson.getAvatar() != null) { person.setAvatar(newPerson.getAvatar()); }
                     if (newPerson.getWallet() != null) { person.setWallet(newPerson.getWallet()); }
+                    if (newPerson.getSessionId() != null) {person.setSessionId(newPerson.getSessionId());}
                     person.setLastUpdateRow(dateTime.format(formatter));
                     return personRepo.save(person);
                 })

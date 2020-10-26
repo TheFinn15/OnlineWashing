@@ -29,21 +29,14 @@ public class Person {
     private String lastUpdateRow;
     @Column(columnDefinition = "char(10000) default 'sdada'")
     private String avatar;
+    private String sessionId;
 
-    public String getLastUpdateRow() {
-        return lastUpdateRow;
+    public Long getId() {
+        return id;
     }
 
-    public void setLastUpdateRow(String lastUpdateRow) {
-        this.lastUpdateRow = lastUpdateRow;
-    }
-
-    public Wallet getWallet() {
-        return wallet;
-    }
-
-    public void setWallet(Wallet wallet) {
-        this.wallet = wallet;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public List<Machine> getMachine() {
@@ -54,70 +47,84 @@ public class Person {
         this.machine = machine;
     }
 
-    public Long getId() {
-        return id;
+    public Wallet getWallet() {
+        return wallet;
+    }
+
+    public void setWallet(Wallet wallet) {
+        this.wallet = wallet;
     }
 
     public String getfName() {
         return fName;
     }
 
-    public String getsName() {
-        return sName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-
-    public String getLogin() {
-        return login;
-    }
-
-    public String getPwd() {
-        return pwd;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public void setfName(String fName) {
         this.fName = fName;
+    }
+
+    public String getsName() {
+        return sName;
     }
 
     public void setsName(String sName) {
         this.sName = sName;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
+    public String getPwd() {
+        return pwd;
     }
 
     public void setPwd(String pwd) {
         this.pwd = pwd;
     }
 
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
     public void setPhone(String phone) {
         this.phone = phone;
     }
 
+    public String getLastUpdateRow() {
+        return lastUpdateRow;
+    }
+
+    public void setLastUpdateRow(String lastUpdateRow) {
+        this.lastUpdateRow = lastUpdateRow;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 }
 
