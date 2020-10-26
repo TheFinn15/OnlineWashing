@@ -1,7 +1,6 @@
 <template>
   <v-app>
     <v-app-bar app color="indigo">
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title style="color: white">{{curLocale.toolbarTitle}}</v-toolbar-title>
       <v-menu v-model="translate" offset-x rounded="b-xl" :close-on-content-click="false" nudge-width="140">
         <template v-slot:activator="{on, attrs}">
@@ -175,10 +174,14 @@
         </v-form>
       </v-card>
     </v-dialog>
-    <router-view></router-view>
-    <v-navigation-drawer app v-model="drawer" color="indigo" v-if="$route.fullPath !== ('/admin/cabinet' || '/admin/auth')">
+    <v-dialog v-model="register" max-width="600px" persistent>
+      <v-card>
+        <v-card-title>
 
-    </v-navigation-drawer>
+        </v-card-title>
+      </v-card>
+    </v-dialog>
+    <router-view></router-view>
   </v-app>
 </template>
 
