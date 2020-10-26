@@ -1,7 +1,6 @@
 <template>
   <v-app>
     <v-app-bar app color="indigo">
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title style="color: white">{{curLocale.toolbarTitle}}</v-toolbar-title>
       <v-menu v-model="translate" offset-x rounded="b-xl" :close-on-content-click="false" nudge-width="140">
         <template v-slot:activator="{on, attrs}">
@@ -50,21 +49,21 @@
       </v-menu>
       <v-spacer></v-spacer>
       <v-spacer></v-spacer>
-      <v-menu offset-y v-if="isAuth" v-model="info.userInfo">
+      <v-menu offset-y v-if="isAuth" :key="info.render">
         <template v-slot:activator="{on, attrs}">
           <v-avatar v-on="on" v-bind="attrs">
-            <v-img :src="info.userInfo[0].avatar"></v-img>
+            <v-img :src="info.userInfo.avatar"></v-img>
           </v-avatar>
         </template>
         <v-card>
-          <v-card-subtitle>{{info.userInfo[0].f_name}} {{info.userInfo[0].s_name}}</v-card-subtitle>
+          <v-card-subtitle>{{info.userInfo.fName}} {{info.userInfo.sName}}</v-card-subtitle>
           <v-divider></v-divider>
           <v-list flat>
             <v-list-item-group>
               <v-list-item @click="$router.push('/balance')">
                 <v-list-item-icon><v-icon>attach_money</v-icon></v-list-item-icon>
                 <v-list-item-content>
-                  <v-list-item-title>{{info.userInfo}} {{curLocale.authedUser.menuItems[0]}}</v-list-item-title>
+                  <v-list-item-title>{{info.userInfo.wallet.balance}} {{curLocale.authedUser.menuItems[0]}}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
               <v-list-item @click="$router.push('/cabinet')">
@@ -80,7 +79,7 @@
                 </v-list-item-content>
               </v-list-item>
               <v-divider></v-divider>
-              <v-list-item @click="$router.push('/logout')">
+              <v-list-item @click="doLogout">
                 <v-list-item-icon><v-icon>exit_to_app</v-icon></v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title>{{curLocale.authedUser.menuItems[3]}}</v-list-item-title>
@@ -115,7 +114,7 @@
                   <v-list-item-title>{{curLocale.nonAuthedUser.menuItems[2]}}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
-              <v-list-item @click="auth = true">
+              <v-list-item @click="authForm = true">
                 <v-list-item-icon><v-icon>login</v-icon></v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title>{{curLocale.nonAuthedUser.menuItems[3]}}</v-list-item-title>
@@ -126,12 +125,12 @@
         </v-card>
       </v-menu>
     </v-app-bar>
-    <v-dialog v-model="auth" max-width="600px" persistent>
+    <v-dialog v-model="authForm" max-width="600px" persistent>
       <v-card>
         <v-card-title>
           {{curLocale.authForm.title}}
           <v-spacer></v-spacer>
-          <v-btn icon @click="auth = false">
+          <v-btn icon @click="authForm = false">
             <v-icon>
               close
             </v-icon>
@@ -146,6 +145,15 @@
             type="error"
         >
           {{errText}}
+        </v-alert>
+        <v-alert
+            v-model="successAuth"
+            color="success"
+            dense
+            outlined
+            type="success"
+        >
+          Авторизация успешна
         </v-alert>
         <v-form>
           <v-container>
@@ -176,14 +184,11 @@
       </v-card>
     </v-dialog>
     <router-view></router-view>
-    <v-navigation-drawer app v-model="drawer" color="indigo" v-if="$route.fullPath !== ('/admin/cabinet' || '/admin/auth')">
-
-    </v-navigation-drawer>
   </v-app>
 </template>
 
 <script>
-  const ip = "192.168.0.113"
+  const ip = "192.168.0.153"
   const port = "9000"
   const axios = require('axios')
   export default {
@@ -191,11 +196,12 @@
     data() {
       return {
         info: {
-          userInfo: null
+          userInfo: null,
+          render: 0
         },
         drawer: false,
         isAuth: false,
-        auth: false,
+        authForm: false,
         curLocale: null,
         locales: {
           'en-EN': {
@@ -290,6 +296,7 @@
           }
         },
         register: false,
+        successAuth: false,
         errForm: false,
         errText: null,
         translate: false,
@@ -304,28 +311,36 @@
       }
     },
     mounted() {
-      axios.get(`http://${ip}:${port}/api/persons/1`)
+      if (localStorage.getItem('uid') !== null) {
+        axios.get(`http://${ip}:${port}/api/persons`)
           .then(resp => {
-            this.info.userInfo = resp.data
-            if (this.info.userInfo.wallet.balance === null || this.info.userInfo.wallet.balance === 0 || this.info.userInfo.wallet.balance === undefined) {
-              this.info.userInfo.wallet.balance =  "00, 00"
-            } else {
-              this.info.userInfo.wallet.balance = this.info.userInfo.wallet.balance.toString() + ", 00";
+            let uId = resp.data.filter(i => i.sessionId === localStorage.getItem('uid'))
+            uId = uId[uId.length-1].id
+            let req = new XMLHttpRequest()
+            req.open('GET', `http://${ip}:${port}/api/persons/${uId}`)
+            req.send()
+            req.onload = () => {
+              this.info.userInfo = JSON.parse(req.responseText)
+              if (this.info.userInfo.wallet.balance === null || this.info.userInfo.wallet.balance === 0 || this.info.userInfo.wallet.balance === undefined) {
+                this.info.userInfo.wallet.balance =  "00, 00"
+              } else {
+                this.info.userInfo.wallet.balance = this.info.userInfo.wallet.balance.toString() + ", 00";
+              }
             }
+            // axios.get()
+            //     .then(resp1 => {
+            //       console.info(resp1)
+            //
+            //     })
           })
+        this.isAuth = true;
+      }
       if (localStorage.getItem('lang') === null) {
         localStorage.setItem('lang', 'ua-UA')
         this.langThird = true;
         this.langOne = false;
         this.langSecond = false;
       }
-      // let req = new XMLHttpRequest()
-      // let info;
-      // req.open('GET', `http://${ip}:${port}/api/persons`, false)
-      // req.send()
-      // info = JSON.parse(req.responseText)['users'].filter(i => i.session_id === +localStorage.getItem('uid'))
-      // this.info.userInfo = info
-      // this.isAuth = info.length > 0
     },
     beforeMount() {
       if (localStorage['lang'] === 'ru-RU') {
@@ -340,6 +355,23 @@
       }
     },
     methods: {
+      doLogout() {
+        axios.get(`http://${ip}:${port}/api/persons`)
+            .then(resp => {
+              let uId = resp.data.filter(i => i.sessionId === localStorage.getItem('uid'))
+              uId = uId[uId.length-1].id
+              axios.put(`http://${ip}:${port}/api/persons/`+uId, {
+                sessionId: ''
+              })
+                  .then(resp1 => {
+                    console.log(resp1)
+                    localStorage.removeItem('uid')
+                  })
+                  .catch(err => console.log('catch error', err))
+            })
+        this.$forceUpdate()
+        window.history.go();
+      },
       changeLangEN() {
         localStorage.setItem('lang', 'en-EN')
         this.curLocale = this.locales["en-EN"];
@@ -355,39 +387,46 @@
         this.curLocale = this.locales["ua-UA"];
         this.$router.go('/cabinet');
       },
-      getUserId() {
-        let request = new XMLHttpRequest();
-        let info;
-        request.open('GET', `http://${ip}:${port}/api/persons`, false)
-        request.send()
-        info = JSON.parse(request.responseText).filter(i => i.login === this.login)
-        return info
-      },
       doAuth() {
         let req = new XMLHttpRequest()
         req.open('GET', `http://${ip}:${port}/api/persons`, false)
         req.send()
-        let info = JSON.parse(req.responseText).filter(i => i.login === this.login && i.pwd === this.pwd)
+        let userId = null
+        let info = JSON.parse(req.responseText).filter(i => {
+          if (i.login === this.login && i.pwd === this.pwd) {
+            userId = i.id;
+            return i;
+          }
+        })
         if (info.length > 0) {
           this.errForm = false
+          let alpha = 'abcdefghijklmnopqrstuvwxyz'.split('');
           let sId = ''
-          for (let i=0;i<10;i++) {
-            sId += Math.floor(Math.random()*10)
+          for (let i=0;i<25;i++) {
+            let randChoose = Math.floor(Math.random()*2)
+            if (randChoose === 0) {
+              sId += alpha[i]
+            } else {
+              sId += Math.floor(Math.random()*10)
+            }
           }
-          let userId = this.getUserId()[0].id;
           console.log(userId)
-          axios.put(`http://${ip}:${port}/api/person/`+userId, {
-            session_id: sId
+          axios.put(`http://${ip}:${port}/api/persons/`+userId, {
+            sessionId: sId.toUpperCase()
           })
               .then(resp => {
                 console.log(resp)
-                localStorage.setItem('uid', sId)
+                localStorage.setItem('uid', sId.toUpperCase())
               })
               .catch(err => console.log('catch error', err))
-          this.login = ''
-          this.pwd = ''
-          this.auth = false
-          this.info.userInfo = info
+          this.successAuth = true;
+          setTimeout(() => {
+            this.login = ''
+            this.pwd = ''
+            this.authForm = false
+            this.info.userInfo = info
+            window.location.reload()
+          }, 1500)
         } else {
           this.errForm = true
           this.errText = 'Введены неверные данные'
