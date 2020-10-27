@@ -15,14 +15,6 @@ public class Wallet {
     private List<HistoryTransaction> historyTransactions;
     private String lastUpdateRow;
 
-    public String getLastUpdateRow() {
-        return lastUpdateRow;
-    }
-
-    public void setLastUpdateRow(String lastUpdateRow) {
-        this.lastUpdateRow = lastUpdateRow;
-    }
-
     public Long getId() {
         return id;
     }
@@ -45,5 +37,13 @@ public class Wallet {
 
     public void setHistoryTransactions(List<HistoryTransaction> historyTransactions) {
         this.historyTransactions = historyTransactions;
+    }
+
+    public String getLastUpdateRow() {
+        return lastUpdateRow;
+    }
+
+    public void setLastUpdateRow(String lastUpdateRow) {
+        this.lastUpdateRow = lastUpdateRow;
     }
 }

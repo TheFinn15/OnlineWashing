@@ -25,28 +25,12 @@ public class Machine {
     private String img;
     private String lastUpdateRow;
 
-    public String getLastUpdateRow() {
-        return lastUpdateRow;
+    public Long getId() {
+        return id;
     }
 
-    public void setLastUpdateRow(String lastUpdateRow) {
-        this.lastUpdateRow = lastUpdateRow;
-    }
-
-    public Long getPercentReady() {
-        return percentReady;
-    }
-
-    public void setPercentReady(Long percentReady) {
-        this.percentReady = percentReady;
-    }
-
-    public Long getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(Long capacity) {
-        this.capacity = capacity;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Stock getStock() {
@@ -57,20 +41,28 @@ public class Machine {
         this.stock = stock;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Long getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(Long capacity) {
+        this.capacity = capacity;
+    }
+
+    public Long getPercentReady() {
+        return percentReady;
+    }
+
+    public void setPercentReady(Long percentReady) {
+        this.percentReady = percentReady;
     }
 
     public String getDescription() {
@@ -103,5 +95,13 @@ public class Machine {
 
     public void setImg(String img) {
         this.img = img;
+    }
+
+    public String getLastUpdateRow() {
+        return lastUpdateRow;
+    }
+
+    public void setLastUpdateRow(String lastUpdateRow) {
+        this.lastUpdateRow = lastUpdateRow;
     }
 }

@@ -20,7 +20,7 @@
 <script>
 import MachineList from "@/components/MachineList";
 const axios = require('axios')
-const ip = "192.168.0.113"
+const ip = "192.168.0.112"
 const port = "9000"
 
 export default {
@@ -31,7 +31,6 @@ export default {
   data() {
     return {
       info: {
-        user_info: null,
         machines: null
       },
       curLocale: null,
@@ -91,7 +90,6 @@ export default {
   beforeMount() {
     if (localStorage['lang'] === 'ru-RU') {
       this.curLocale = this.locales["ru-RU"];
-      console.log(this.curLocale);
     } else if (localStorage['lang'] === 'en-EN') {
       this.curLocale = this.locales["en-EN"];
     } else if (localStorage['lang'] === 'ua-UA') {
@@ -102,8 +100,6 @@ export default {
     }
   },
   mounted() {
-    axios.get(`http://${ip}:${port}/api/persons`)
-        .then(resp => (this.info.user_info = resp.data))
     axios.get(`http://${ip}:${port}/api/machines`)
       .then(resp => (this.info.machines = resp.data))
   }

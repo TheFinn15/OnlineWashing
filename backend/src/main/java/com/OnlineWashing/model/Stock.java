@@ -15,14 +15,6 @@ public class Stock {
     private int discount;
     private String lastUpdateRow;
 
-    public String getLastUpdateRow() {
-        return lastUpdateRow;
-    }
-
-    public void setLastUpdateRow(String lastUpdateRow) {
-        this.lastUpdateRow = lastUpdateRow;
-    }
-
     public Long getId() {
         return id;
     }
@@ -61,5 +53,13 @@ public class Stock {
 
     public void setDiscount(int discount) {
         this.discount = discount;
+    }
+
+    public String getLastUpdateRow() {
+        return lastUpdateRow;
+    }
+
+    public void setLastUpdateRow(String lastUpdateRow) {
+        this.lastUpdateRow = lastUpdateRow;
     }
 }

@@ -24,20 +24,20 @@ public class Draft {
     private String date;
     private String lastUpdateRow;
 
-    public Long getPrice() {
-        return price;
+    public Long getId() {
+        return id;
     }
 
-    public void setPrice(Long price) {
-        this.price = price;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public String getLastUpdateRow() {
-        return lastUpdateRow;
+    public Person getPerson() {
+        return person;
     }
 
-    public void setLastUpdateRow(String lastUpdateRow) {
-        this.lastUpdateRow = lastUpdateRow;
+    public void setPerson(Person person) {
+        this.person = person;
     }
 
     public Machine getMachine() {
@@ -46,6 +46,14 @@ public class Draft {
 
     public void setMachine(Machine machine) {
         this.machine = machine;
+    }
+
+    public Long getPrice() {
+        return price;
+    }
+
+    public void setPrice(Long price) {
+        this.price = price;
     }
 
     public Long getVolume() {
@@ -64,14 +72,6 @@ public class Draft {
         this.additional = additional;
     }
 
-    public String getCreditCard() {
-        return creditCard;
-    }
-
-    public void setCreditCard(String creditCard) {
-        this.creditCard = creditCard;
-    }
-
     public String getPaymentType() {
         return paymentType;
     }
@@ -80,20 +80,12 @@ public class Draft {
         this.paymentType = paymentType;
     }
 
-    public Long getId() {
-        return id;
+    public String getCreditCard() {
+        return creditCard;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Person getPerson() {
-        return person;
-    }
-
-    public void setPerson(Person person) {
-        this.person = person;
+    public void setCreditCard(String creditCard) {
+        this.creditCard = creditCard;
     }
 
     public String getDate() {
@@ -102,5 +94,13 @@ public class Draft {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getLastUpdateRow() {
+        return lastUpdateRow;
+    }
+
+    public void setLastUpdateRow(String lastUpdateRow) {
+        this.lastUpdateRow = lastUpdateRow;
     }
 }

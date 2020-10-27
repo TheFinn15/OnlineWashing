@@ -96,12 +96,6 @@
         <v-card>
           <v-list>
             <v-list-item-group>
-              <v-list-item @click="$router.push('/balance')">
-                <v-list-item-icon><v-icon>attach_money</v-icon></v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title>{{info.userInfo}} {{curLocale.nonAuthedUser.menuItems[0]}}</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
               <v-list-item @click="$router.push('/')">
                 <v-list-item-icon><v-icon>apps</v-icon></v-list-item-icon>
                 <v-list-item-content>
@@ -281,7 +275,7 @@
 </template>
 
 <script>
-  const ip = "192.168.0.153"
+  const ip = "192.168.0.112"
   const port = "9000"
   const axios = require('axios')
   export default {
@@ -567,20 +561,27 @@
               avatar: this.form.avatar,
               sessionId: sId
             }
-            axios.post(`http://${ip}:${port}/api/persons`, {
-              data
-            }).catch(err => {
-              this.errForm = true
-              this.errText = 'Ошибка регистрация. Попробуйте позже'
-              console.log(err)
+            axios({
+              url: `http://${ip}:${port}/api/persons`,
+              method: 'POST',
+              data: data
             })
+                .then(resp => {
+                  console.log(resp)
+                  localStorage.setItem('uid', sId)
+                  this.info.userInfo = data
+                })
+                .catch(err => {
+                  this.errForm = true
+                  this.errText = 'Ошибка регистрация. Попробуйте позже'
+                  console.log(err)
+                })
             this.successForm = true;
             setTimeout(() => {
               for (let item of Object.keys(this.form)) {
                 this.form[item] = '';
               }
               this.register = false
-              this.info.userInfo = data
               window.location.reload()
             }, 1500)
           }
